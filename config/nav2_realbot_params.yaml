@@ -2,8 +2,8 @@ global_costmap:
   ros__parameters:
     global_frame: map
     robot_base_frame: base_link
-    update_frequency: 5.0
-    publish_frequency: 5.0
+    update_frequency: 20.0
+    publish_frequency: 20.0
     rolling_window: True
     width: 20
     height: 20
@@ -36,8 +36,8 @@ local_costmap:
     use_sim_time: True
     global_frame: odom
     robot_base_frame: base_link
-    update_frequency: 5.0
-    publish_frequency: 5.0
+    update_frequency: 20.0
+    publish_frequency: 20.0
     rolling_window: True
     width: 6
     height: 6

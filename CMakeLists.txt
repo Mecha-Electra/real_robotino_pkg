@@ -36,3 +36,8 @@ install(
 )
 
 ament_package()
+
+install(PROGRAMS
+  scripts/goal_sender.py
+  DESTINATION lib/${PROJECT_NAME}
+)
