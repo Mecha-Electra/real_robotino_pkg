@@ -67,7 +67,11 @@ def generate_launch_description():
         lidar_launch,
         robotino_launch,
         TimerAction(
-            period=2.0,  # espera 2 segundos
-            actions=[mapping_launch, navigation_launch]
+            period=10.0,  # espera 2 segundos
+            actions=[mapping_launch]
+        ),
+        TimerAction(
+            period=15.0,  # espera 2 segundos
+            actions=[navigation_launch]
         )
     ])
