@@ -35,9 +35,30 @@ install(
   DESTINATION share/${PROJECT_NAME}/config
 )
 
+# Instala scripts (isso copia para o install space)
+install(
+  DIRECTORY scripts/
+  DESTINATION lib/${PROJECT_NAME}
+  FILES_MATCHING PATTERN "*.py"
+)
+
+# Instala o código de missions, se for script executável (opcional)
+install(
+  DIRECTORY missions/
+  DESTINATION lib/${PROJECT_NAME}
+  FILES_MATCHING PATTERN "*.py"
+)
+
 ament_package()
 
 install(PROGRAMS
   scripts/goal_sender.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  PROGRAMS
+    scripts/porta_utils.py
+    missions/missionOne.py
   DESTINATION lib/${PROJECT_NAME}
 )
