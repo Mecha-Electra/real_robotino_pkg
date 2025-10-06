@@ -141,22 +141,22 @@ controller_server:
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
       debug_trajectory_details: True
-      min_vel_x: -0.1
-      min_vel_y: -0.1
-      max_vel_x: 0.1
-      max_vel_y: 0.1
+      min_vel_x: -0.15
+      min_vel_y: -0.15
+      max_vel_x: 0.2
+      max_vel_y: 0.2
       max_vel_theta: 1.0
       min_speed_xy: 0.0
-      max_speed_xy: 0.05
+      max_speed_xy: 0.15
       min_speed_theta: 0.0
       acc_lim_x: 1.0
       acc_lim_y: 1.0
-      acc_lim_theta: 1.5
+      acc_lim_theta: 0.7
       decel_lim_x: -1.0
       decel_lim_y: -1.0
-      decel_lim_theta: -1.5
+      decel_lim_theta: -0.7
       vx_samples: 20
-      vy_samples: 20
+      vy_samples: 10
       vtheta_samples: 20
       linear_granularity: 0.05
       angular_granularity: 0.025
@@ -174,12 +174,12 @@ controller_server:
           "dwb_critics::TwirlingCritic"]
 
       # Pesos dos críticos (quanto maior, mais prioridade)
-      dwb_critics::GoalAlignCritic.scale: 30.0
+      dwb_critics::GoalAlignCritic.scale: 15.0
       dwb_critics::GoalDistCritic.scale: 20.0
       dwb_critics::PathDistCritic.scale: 40.0  
       dwb_critics::PathAlignCritic.scale: 40.0
-      dwb_critics::RotateToGoalCritic.scale: 30.0
-      dwb_critics::TwirlingCritic.scale: 30.0
+      dwb_critics::RotateToGoalCritic.scale: 15.0
+      dwb_critics::TwirlingCritic.scale: 5.0
 
       # Parâmetros específicos de cada crítico
       dwb_critics::GoalAlignCritic.forward_point_distance: 0.1
@@ -188,7 +188,7 @@ controller_server:
       dwb_critics::RotateToGoalCritic.slowing_factor: 3.0
       dwb_critics::RotateToGoalCritic.lookahead_time: -1.0
       dwb_critics::RotateToGoalCritic.trans_stopped_velocity: 0.1
-      dwb_critics::RotateToGoalCritic.xy_goal_tolerance: 0.2
+      dwb_critics::RotateToGoalCritic.xy_goal_tolerance: 0.1
 
 
 controller_server_rclcpp_node:
@@ -199,10 +199,10 @@ velocity_smoother:
   ros__parameters:
     smoothing_frequency: 20.0
     scale_velocities: False
-    max_velocity: [0.2, 0.2, 1.0]
-    min_velocity: [-0.2, -0.2, -1.0]
-    max_accel: [1.2, 1.2, 1.5]
-    max_decel: [-1.2, -1.2, -1.5]
+    max_velocity: [0.25, 0.25, 1.0]
+    min_velocity: [-0.25, -0.25, -1.0]
+    max_accel: [1.2, 1.2, 0.7]
+    max_decel: [-1.2, -1.2, -0.7]
 
 
 controller_server_rclcpp_node:
