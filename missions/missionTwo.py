@@ -9,33 +9,31 @@ from nav2_msgs.action import NavigateToPose
 from std_msgs.msg import Bool
 from geometry_msgs.msg import PoseStamped, Quaternion
 
-class MissionOne(Node):
+class MissionTwo(Node):
     def __init__(self):
-        super().__init__('mission_one')
-        self.get_logger().info("Iniciando Missão Um")
-
-        self.porta_aberta = False
-
-        self.door_state_subscriber = self.create_subscription(Bool, '/porta_aberta', self.porta_callback, 10)
+        super().__init__('mission_two')
+        self.get_logger().info("Iniciando Missão Dois")
 
         self.nav_action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
-        #----------ESPERAR ABERTURA DA PORTA----------
-        self.get_logger().info("Esperando abertura da porta...")
-        while not self.verificar_porta():
-            rclpy.spin_once(self, timeout_sec=0.1)
-        self.get_logger().info("Porta aberta!")
+        #----------OPERADOR SE APRESENTA----------
 
-        #----------CONFIRMAÇÃO DE ABERTURA----------
+        #----------MEMORIZAR OPERADOR----------
 
-        #----------WAYPOINT 1----------
+        #----------ESPERAR UM MINUTO----------
+
+        #----------GIRAR 180----------
         self.ir_para_waypoint(0.0, 0.0, 3.14) 
 
-        #----------OPERADOR PERGUNTA----------
+        #----------SE MOVER ATÉ O OPERADOR----------
+        self.ir_para_waypoint(0.7, 0.4, 3.14) 
 
-        #----------RESPONDER----------
+        #----------SAUDAR----------
 
-        #----------GERAR LOG----------
+        #----------INFORMAR TAMANHO DA MULTIDÃO----------
+
+        #----------EXIBIR LOG----------
+
 
     # ========= LÓGICA DE NAVEGAÇÃO =========
 
@@ -90,7 +88,7 @@ class MissionOne(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    node = MissionOne()
+    node = MissionTwo()
 
     rclpy.spin(node)
 

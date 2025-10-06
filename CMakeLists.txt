@@ -59,6 +59,10 @@ install(PROGRAMS
 install(
   PROGRAMS
     scripts/porta_utils.py
+    scripts/nav_toPose.py
     missions/missionOne.py
+    missions/missionTwo.py
+    missions/missionThree.py
+    missions/missionFour.py
   DESTINATION lib/${PROJECT_NAME}
 )

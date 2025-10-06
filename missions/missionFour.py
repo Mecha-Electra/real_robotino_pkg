@@ -9,31 +9,27 @@ from nav2_msgs.action import NavigateToPose
 from std_msgs.msg import Bool
 from geometry_msgs.msg import PoseStamped, Quaternion
 
-class MissionOne(Node):
+class MissionFour(Node):
     def __init__(self):
-        super().__init__('mission_one')
-        self.get_logger().info("Iniciando Missão Um")
-
-        self.porta_aberta = False
-
-        self.door_state_subscriber = self.create_subscription(Bool, '/porta_aberta', self.porta_callback, 10)
+        super().__init__('mission_four')
+        self.get_logger().info("Iniciando Missão Quatro")
 
         self.nav_action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
-        #----------ESPERAR ABERTURA DA PORTA----------
-        self.get_logger().info("Esperando abertura da porta...")
-        while not self.verificar_porta():
-            rclpy.spin_once(self, timeout_sec=0.1)
-        self.get_logger().info("Porta aberta!")
 
-        #----------CONFIRMAÇÃO DE ABERTURA----------
+        #----------IR PARA WAYPOINT 1----------
+        self.ir_para_waypoint(1.0, 2.0, 0) 
 
-        #----------WAYPOINT 1----------
-        self.ir_para_waypoint(0.0, 0.0, 3.14) 
+        #----------IDENTIFICAR OBJETOS----------
 
-        #----------OPERADOR PERGUNTA----------
+        #----------ANUNCIAR OBJETOS---------- 
 
-        #----------RESPONDER----------
+        #----------PEGAR----------
+
+        #----------IR PARA ENTREGA----------
+        self.ir_para_waypoint(3.0, 5.0, 0)
+
+        #----------ENTREGAR----------
 
         #----------GERAR LOG----------
 
@@ -90,10 +86,13 @@ class MissionOne(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    node = MissionOne()
+    node = MissionFour()
 
     rclpy.spin(node)
 
+    # Destroy the node explicitly
+    # (optional - otherwise it will be done automatically
+    # when the garbage collector destroys the node object)
     node.destroy_node()
     rclpy.shutdown()
 

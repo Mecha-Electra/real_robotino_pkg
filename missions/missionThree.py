@@ -9,10 +9,10 @@ from nav2_msgs.action import NavigateToPose
 from std_msgs.msg import Bool
 from geometry_msgs.msg import PoseStamped, Quaternion
 
-class MissionOne(Node):
+class MissionThree(Node):
     def __init__(self):
-        super().__init__('mission_one')
-        self.get_logger().info("Iniciando Missão Um")
+        super().__init__('mission_three')
+        self.get_logger().info("Iniciando Missão Três")
 
         self.porta_aberta = False
 
@@ -28,14 +28,32 @@ class MissionOne(Node):
 
         #----------CONFIRMAÇÃO DE ABERTURA----------
 
-        #----------WAYPOINT 1----------
-        self.ir_para_waypoint(0.0, 0.0, 3.14) 
+        #----------IR PARA WAYPOINT 1----------
+        self.ir_para_waypoint(1.0, 0.0, 0) 
 
-        #----------OPERADOR PERGUNTA----------
+        #Confirmar
 
-        #----------RESPONDER----------
+        #----------IR PARA WAYPOINT 2----------
+        self.ir_para_waypoint(1.0, 0.5, 0) 
 
-        #----------GERAR LOG----------
+        #Memorizar Operador
+
+        #Sinalizar
+
+        #Seguir
+
+        #----------IR PARA WAYPOINT 2----------
+        self.ir_para_waypoint(1.0, 0.5, 3.14)
+
+        #----------VOLTAR PARA A PORTA----------
+        self.ir_para_waypoint(0.0, 0.0, 0)
+
+    def verificar_porta(self):
+        return self.porta_aberta
+
+    def porta_callback(self, msg):
+        self.get_logger().info(f"Recebido estado da porta: {'ABERTA' if msg.data else 'FECHADA'}")
+        self.porta_aberta = msg.data
 
     # ========= LÓGICA DE NAVEGAÇÃO =========
 
@@ -90,10 +108,13 @@ class MissionOne(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    node = MissionOne()
+    node = MissionThree()
 
     rclpy.spin(node)
 
+    # Destroy the node explicitly
+    # (optional - otherwise it will be done automatically
+    # when the garbage collector destroys the node object)
     node.destroy_node()
     rclpy.shutdown()
 
