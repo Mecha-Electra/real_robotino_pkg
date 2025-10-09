@@ -7,33 +7,34 @@ from rclpy.action import ActionClient
 from nav2_msgs.action import NavigateToPose
 
 from std_msgs.msg import Bool
+from std_msgs.msg import String
 from geometry_msgs.msg import PoseStamped, Quaternion
 
-class MissionOne(Node):
+class MissionObjectRecognition(Node):
     def __init__(self):
-        super().__init__('mission_one')
-        self.get_logger().info("Iniciando Missão Um")
+        super().__init__('object_recognition')
+        self.get_logger().info("Iniciando Object Recognition")
 
-        self.porta_aberta = False
-
-        self.door_state_subscriber = self.create_subscription(Bool, '/porta_aberta', self.porta_callback, 10)
-
+        self.talker_publisher = self.create_publisher(String, 'say_text', 10)
         self.nav_action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
-        #----------ESPERAR ABERTURA DA PORTA----------
-        self.get_logger().info("Esperando abertura da porta...")
-        while not self.verificar_porta():
-            rclpy.spin_once(self, timeout_sec=0.1)
-        self.get_logger().info("Porta aberta!")
+        #----------IR PARA WAYPOINT 1----------
+        self.falar("Going to Waypoint 1!")
+        self.ir_para_waypoint(1.0, 0.0, 0) 
+        self.falar("Waypoint 1 Reached!")
 
-        #----------CONFIRMAÇÃO DE ABERTURA----------
+        #----------IDENTIFICAR OBJETOS----------
 
-        #----------WAYPOINT 1----------
-        self.ir_para_waypoint(0.0, 0.0, 3.14) 
+        #----------ANUNCIAR OBJETOS---------- 
 
-        #----------OPERADOR PERGUNTA----------
+        #----------PEGAR----------
 
-        #----------RESPONDER----------
+        #----------IR PARA ENTREGA----------
+        self.falar("Going to Delivery Area")
+        self.ir_para_waypoint(3.0, 5.0, 0)
+        self.falar("Delivery Area Reached")
+
+        #----------ENTREGAR----------
 
         #----------GERAR LOG----------
 
@@ -86,14 +87,23 @@ class MissionOne(Node):
         q.w = math.cos(yaw / 2.0)
         return q
     
+    def falar(self, texto):
+        msg = String()
+        msg.data = texto
+        self.get_logger().info(f'Publicando texto')
+        self.talker_publisher.publish(msg)
+    
 
 def main(args=None):
     rclpy.init(args=args)
 
-    node = MissionOne()
+    node = MissionObjectRecognition()
 
     rclpy.spin(node)
 
+    # Destroy the node explicitly
+    # (optional - otherwise it will be done automatically
+    # when the garbage collector destroys the node object)
     node.destroy_node()
     rclpy.shutdown()
 

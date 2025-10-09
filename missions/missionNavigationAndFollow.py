@@ -7,31 +7,66 @@ from rclpy.action import ActionClient
 from nav2_msgs.action import NavigateToPose
 
 from std_msgs.msg import Bool
+from std_msgs.msg import String
 from geometry_msgs.msg import PoseStamped, Quaternion
 
-class MissionFour(Node):
+class MissionNavigationFollow(Node):
     def __init__(self):
-        super().__init__('mission_four')
-        self.get_logger().info("Iniciando Missão Quatro")
+        super().__init__('navigation_follow_me')
+        self.get_logger().info("Iniciando Navigation and Follow Me")
+
+        self.porta_aberta = False
+
+        self.door_state_subscriber = self.create_subscription(Bool, '/porta_aberta', self.porta_callback, 10)
+
+        self.talker_publisher = self.create_publisher(String, 'say_text', 10)
 
         self.nav_action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
+        #----------ESPERAR ABERTURA DA PORTA----------
+        self.get_logger().info("Esperando abertura da porta...")
+        while not self.verificar_porta():
+            rclpy.spin_once(self, timeout_sec=0.1)
+        self.get_logger().info("Porta aberta!")
+
+        #----------CONFIRMAÇÃO DE ABERTURA----------
+        self.falar("Door Open!!")
 
         #----------IR PARA WAYPOINT 1----------
-        self.ir_para_waypoint(1.0, 2.0, 0) 
+        self.falar("Going to Waypoint 1!")
+        self.ir_para_waypoint(1.0, 0.0, 0) 
 
-        #----------IDENTIFICAR OBJETOS----------
+        #Confirmar
+        self.falar("Waypoint 1 Reached!")
 
-        #----------ANUNCIAR OBJETOS---------- 
+        #----------IR PARA WAYPOINT 2----------
+        self.falar("Going to Waypoint 2!")
+        self.ir_para_waypoint(1.0, 0.5, 0)
+        self.falar("Waypoint 2 Reached!")
 
-        #----------PEGAR----------
+        #Memorizar Operador
 
-        #----------IR PARA ENTREGA----------
-        self.ir_para_waypoint(3.0, 5.0, 0)
+        #----------SINALIZAR----------
+        self.falar("Operator Memorized!!")
 
-        #----------ENTREGAR----------
+        #Seguir
+        self.falar("Following")
 
-        #----------GERAR LOG----------
+        #----------IR PARA WAYPOINT 2----------
+        self.falar("Going to Waypoint 2!")
+        self.ir_para_waypoint(1.0, 0.5, 0)
+        self.falar("Waypoint 2 Reached!")
+
+        #----------VOLTAR PARA A PORTA----------
+        self.falar("Returning to the Door!")
+        self.ir_para_waypoint(0.0, 0.0, 0)
+
+    def verificar_porta(self):
+        return self.porta_aberta
+
+    def porta_callback(self, msg):
+        self.get_logger().info(f"Recebido estado da porta: {'ABERTA' if msg.data else 'FECHADA'}")
+        self.porta_aberta = msg.data
 
     # ========= LÓGICA DE NAVEGAÇÃO =========
 
@@ -82,11 +117,17 @@ class MissionFour(Node):
         q.w = math.cos(yaw / 2.0)
         return q
     
+    def falar(self, texto):
+        msg = String()
+        msg.data = texto
+        self.get_logger().info(f'Publicando texto')
+        self.talker_publisher.publish(msg)
+    
 
 def main(args=None):
     rclpy.init(args=args)
 
-    node = MissionFour()
+    node = MissionNavigationFollow()
 
     rclpy.spin(node)
 

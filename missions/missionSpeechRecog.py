@@ -7,33 +7,28 @@ from rclpy.action import ActionClient
 from nav2_msgs.action import NavigateToPose
 
 from std_msgs.msg import Bool
+from std_msgs.msg import String
 from geometry_msgs.msg import PoseStamped, Quaternion
 
-class MissionTwo(Node):
+class MissionSpeechRecognition(Node):
     def __init__(self):
-        super().__init__('mission_two')
-        self.get_logger().info("Iniciando Missão Dois")
+        super().__init__('speech_recognition')
+        self.get_logger().info("Iniciando Speech Recognition")
+
+        self.porta_aberta = False
+
+        self.door_state_subscriber = self.create_subscription(Bool, '/porta_aberta', self.porta_callback, 10)
+        
+        self.talker_publisher = self.create_publisher(String, 'say_text', 10)
 
         self.nav_action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
-        #----------OPERADOR SE APRESENTA----------
+        #----------OPERADOR PERGUNTA----------
 
-        #----------MEMORIZAR OPERADOR----------
+        #----------RESPONDER----------
 
-        #----------ESPERAR UM MINUTO----------
-
-        #----------GIRAR 180----------
-        self.ir_para_waypoint(0.0, 0.0, 3.14) 
-
-        #----------SE MOVER ATÉ O OPERADOR----------
-        self.ir_para_waypoint(0.7, 0.4, 3.14) 
-
-        #----------SAUDAR----------
-
-        #----------INFORMAR TAMANHO DA MULTIDÃO----------
-
-        #----------EXIBIR LOG----------
-
+        #----------GERAR LOG----------
+        self.falar("Gerando LOG")
 
     # ========= LÓGICA DE NAVEGAÇÃO =========
 
@@ -84,11 +79,17 @@ class MissionTwo(Node):
         q.w = math.cos(yaw / 2.0)
         return q
     
+    def falar(self, texto):
+        msg = String()
+        msg.data = texto
+        self.get_logger().info(f'Publicando texto')
+        self.talker_publisher.publish(msg)
+
 
 def main(args=None):
     rclpy.init(args=args)
 
-    node = MissionTwo()
+    node = MissionSpeechRecognition()
 
     rclpy.spin(node)
 
