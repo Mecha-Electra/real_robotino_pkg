@@ -20,6 +20,7 @@ class MissionNavigationFollow(Node):
         self.door_state_subscriber = self.create_subscription(Bool, '/porta_aberta', self.porta_callback, 10)
 
         self.talker_publisher = self.create_publisher(String, 'say_text', 10)
+        self.whisper_publisher = self.create_publisher(Bool, '/enable_whisper', 10)
 
         self.nav_action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
@@ -51,6 +52,7 @@ class MissionNavigationFollow(Node):
 
         #Seguir
         self.falar("Following")
+        self.ativar_whisper()
 
         #----------IR PARA WAYPOINT 2----------
         self.falar("Going to Waypoint 2!")
@@ -67,6 +69,18 @@ class MissionNavigationFollow(Node):
     def porta_callback(self, msg):
         self.get_logger().info(f"Recebido estado da porta: {'ABERTA' if msg.data else 'FECHADA'}")
         self.porta_aberta = msg.data
+
+    def ativar_whisper(self):
+        msg = Bool()
+        msg.data = True
+        self.get_logger().info("Ativando Whisper STT")
+        self.whisper_publisher.publish(msg)
+
+    def desativar_whisper(self):
+        msg = Bool()
+        msg.data = False
+        self.get_logger().info("Desativando Whisper STT")
+        self.whisper_publisher.publish(msg)
 
     # ========= LÓGICA DE NAVEGAÇÃO =========
 
