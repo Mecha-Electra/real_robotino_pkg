@@ -50,7 +50,7 @@ class MissionNavigationAndFollow(Node):
         elif self.stage == 1:
             #----------WAYPOINT 1----------
             self.get_logger().info(f"Stage {self.stage}")
-            self.ir_para_waypoint(5.84, 7.73, 0.0) #3.5, 2.5
+            self.ir_para_waypoint(6.0, 7.73, -1.57) #3.5, 2.5
             self.advance_stage()
         
         elif self.stage == 2:

@@ -16,8 +16,6 @@ class MissionSpeechRecognition(Node):
         self.get_logger().info("Iniciando Speech Recognition")
 
         self.porta_aberta = False
-
-        self.door_state_subscriber = self.create_subscription(Bool, '/porta_aberta', self.porta_callback, 10)
         
         self.talker_publisher = self.create_publisher(String, 'say_text', 10)
 
@@ -28,7 +26,7 @@ class MissionSpeechRecognition(Node):
         #----------RESPONDER----------
 
         #----------GERAR LOG----------
-        self.falar("Gerando LOG")
+        self.falar("Creating Log")
 
     # ========= LÓGICA DE NAVEGAÇÃO =========
 

@@ -6,6 +6,7 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
 
 def generate_launch_description():
 
@@ -18,6 +19,7 @@ def generate_launch_description():
     navigation_parameters = os.path.join(pkg_real_robotino, 'config', 'nav2_realbot_params.yaml')
     localizer_mode_params = os.path.join(pkg_real_robotino, 'config', 'localizer_realbot.yaml')
     mapping_mode_params = os.path.join(pkg_real_robotino, 'config', 'mapping_realbot.yaml')
+    map_yaml_path = '/home/robot/maps/home_submap.yaml'
 
     robot_description = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -33,6 +35,14 @@ def generate_launch_description():
         launch_arguments={
             'use_sim_time': 'false',
             'slam_params_file': mapping_mode_params,
+        }.items(),
+    )
+    localization_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_robotino_navigation, 'launch', 'localization.launch.py')),
+        launch_arguments={
+            'use_sim_time': 'false',
+            'slam_params_file': localizer_mode_params,
         }.items(),
     )
 
@@ -62,13 +72,36 @@ def generate_launch_description():
         }.items(),
     )
 
+    submap_layer = Node(
+        package='real_robotino_pkg',
+        executable='submap_publisher.py',
+        name='submap_publisher',
+        output='screen',
+        parameters=[
+            {'map_yaml_path': map_yaml_path},
+            {'frame_id': 'obstacle_map'},
+            {'parent_frame_id': 'map'},
+            {'topic_name': '/obstacle_layer_map'},
+            {'publish_rate': 1.0}
+        ]
+    )
+
     return LaunchDescription([
         robot_description,
         lidar_launch,
         robotino_launch,
         TimerAction(
+            period=8.0,
+            actions=[submap_layer]
+        ),
+
+        #TimerAction(
+        #    period=10.0,  # espera 10 segundos
+        #    actions=[mapping_launch]
+        #),
+        TimerAction(
             period=10.0,  # espera 2 segundos
-            actions=[mapping_launch]
+            actions=[localization_launch]
         ),
         TimerAction(
             period=15.0,  # espera 2 segundos

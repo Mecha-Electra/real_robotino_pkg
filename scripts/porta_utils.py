@@ -20,9 +20,9 @@ class PortaDetectorNode(Node):
         self.porta_ja_aberta = False
 
         # Configurações do setor de varredura
-        self.angulo_min = -2.0  # graus
-        self.angulo_max = 2.0   # graus
-        self.distancia_limite = 0.25  # metros
+        self.angulo_min = 175  # graus
+        self.angulo_max = 182  # graus
+        self.distancia_limite = 1.0 # metros
 
         self.get_logger().info("Node de detecção da porta iniciado.")
 

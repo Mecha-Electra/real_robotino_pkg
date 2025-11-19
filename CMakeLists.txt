@@ -60,9 +60,12 @@ install(
   PROGRAMS
     scripts/porta_utils.py
     scripts/nav_toPose.py
+    scripts/submap_publisher.py
     missions/missionNavigationAndFollow.py
+    missions/missionNavigation.py
     missions/missionObjectRecog.py
     missions/missionPersonalRecog.py
     missions/missionSpeechRecog.py
+    missions/missionInspecao.py
   DESTINATION lib/${PROJECT_NAME}
 )
