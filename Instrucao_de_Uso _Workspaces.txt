@@ -1,0 +1,73 @@
+WORKSPACE HRI
+
+	cd ~/hri_ws
+	source ~/hri_ws/venv/bin/activate    #ativar venv
+	source /opt/ros/humble/setup.bash         #source no ros
+	source ~/hri_ws/install/setup.bash   #source no workspace
+	colcon build                              #colcon build 
+
+PASTA RASA
+	cd ~/chatbot_mecha
+	source .venv/bin/activate
+	
+WORKSPACE PRINCIPAL
+	cd ~/ros2_ws
+	source venv/bin/activate
+	source /opt/ros/humble/setup.bash
+	source install/setup.bash
+	colcon build
+	
+
+
+
+	
+	
+	
+	
+=====================================================================
+	cd ~/chatbot_mecha
+	source .venv/bin/activate
+	rasa run actions --port 5055
+
+	cd ~/chatbot_mecha
+	source .venv/bin/activate
+	rasa run --enable-api --cors "*" --debug --port 5005
+
+	source /opt/ros/humble/setup.bash
+	source ~/hri_ws/venv/bin/activate
+	source ~/hri_ws/install/setup.bash
+	ros2 run tts_espeak_cli tts_espeak_cli_node --ros-args \
+	  -p voice:=en-us -p rate:=180 -p pitch:=50 -p gap_ms:=150
+	  
+	source /opt/ros/humble/setup.bash
+	source ~/hri_ws/venv/bin/activate
+	source ~/hri_ws/install/setup.bash
+	export RASA_URL=http://localhost:5005/webhooks/rest/webhook
+	export RASA_TIMEOUT_S=60
+	ros2 run rasa_bridge rasa_bridge_node
+	
+	source /opt/ros/humble/setup.bash
+	source ~/hri_ws/install/setup.bash
+	source ~/hri_ws/venv/bin/activate
+
+	~/hri_ws/venv/bin/python \
+	  ~/hri_ws/install/stt_whisper/lib/stt_whisper/stt_whisper_node \
+	  --ros-args \
+	  -p language:=en -p model_size:=base -p device:=cpu -p compute_type:=auto \
+	  -p sample_rate:=16000 -p block_ms:=30 -p vad_thresh:=0.01 \
+	  -p silence_ms_to_cut:=700 -p max_utt_ms:=20000
+	  
+	  
+	GERAR LOG
+	Zerar o histórico do Rasa (sender ros2) (no venv do chatbot)
+	cd ~/chatbot_mecha
+	source .venv/bin/activate
+
+	CID=ros2
+	# substitui a lista de eventos por vazia
+	curl -s -X PUT "http://localhost:5005/conversations/$CID/tracker/events" \
+	  -H "Content-Type: application/json" -d '{"events": []}'
+
+	# conferir que zerou
+	curl -s "http://localhost:5005/conversations/$CID/tracker" \
+	 | jq '{count:(.events|length)}'
